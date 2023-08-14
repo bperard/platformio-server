@@ -38,12 +38,11 @@ const onConnection = (socket) => {
 
   // HANDLERS
   registerUserHandlers(server, socket);
-  registerRoomHandlers(server, socket);
 };
 
 server.on('connection', onConnection);
 
-const registerRoomHandlers = (server, socket) => {
+const registerUserHandlers = (server, socket) => {
   const stringGenerator = (length, charSetString) => {
     let outputString = '';
     let chars = '';
@@ -60,17 +59,13 @@ const registerRoomHandlers = (server, socket) => {
 
     return outputString;
   };
+
   const createRoom = (userName) => {
     const roomName = stringGenerator(5, 'A1');
     console.log(userName);
     console.log(roomName);
   };
 
-  // LISTENERS - ROOM_(EVENT)
-  socket.on('ROOM_CREATE', createRoom);
-};
-
-const registerUserHandlers = (server, socket) => {
   const nameUser = (userName) => {
     socket.data.name = userName;
     let nameHash = 0;
@@ -82,5 +77,6 @@ const registerUserHandlers = (server, socket) => {
   };
 
   // LISTENERS  USER_(EVENT)
-  socket.on('USER_NAME', nameUser);
+  socket.on('USER:ROOM_CREATE', createRoom);
+  socket.on('USER:NAME_ADD', nameUser);
 };
