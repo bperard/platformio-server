@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 require('dotenv').config();
 const { createServer } = require('http');
@@ -8,8 +8,8 @@ const PORT = 3000;
 const httpServer = createServer();
 const server = new Server(httpServer, {
   cors: {
-    origin: '*'
-  }
+    origin: '*',
+  },
 });
 
 httpServer.listen(PORT);
@@ -26,11 +26,11 @@ const onConnection = (socket) => {
     const eventNotification = {
       event,
       date: Date(),
-      eventPayload
-    }
+      eventPayload,
+    };
     console.log(eventNotification);
   });
-  
+
   socket.on('disconnect', () => {
     console.log(`User disconnected ${socket.id}`);
     console.log(socket.data);
@@ -38,7 +38,8 @@ const onConnection = (socket) => {
 
   // HANDLERS
   registerUserHandlers(server, socket);
-}
+  registerRoomHandlers(server, socket);
+};
 
 server.on('connection', onConnection);
 
@@ -50,22 +51,24 @@ const registerRoomHandlers = (server, socket) => {
     chars += charSetString.indexOf('a') > -1 ? 'abcdefghijklmnopqrstuvwxyz' : '';
     chars += charSetString.indexOf('A') > -1 ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' : '';
     chars += charSetString.indexOf('1') > -1 ? '1234567890' :
-    '';
+      '';
     chars += charSetString.indexOf('!') > -1 ? '!@#$%^&*()_+-=' : '';
 
     for (let i = 0; i < length; i++) {
-      
+      outputString += chars[Math.floor(Math.random() * chars.length)];
     }
 
     return outputString;
-  }
+  };
   const createRoom = (userName) => {
-
-  }
+    const roomName = stringGenerator(5, 'A1');
+    console.log(userName);
+    console.log(roomName);
+  };
 
   // LISTENERS - ROOM_(EVENT)
-  socket.on('ROOM_CREATE', )
-}
+  socket.on('ROOM_CREATE', createRoom);
+};
 
 const registerUserHandlers = (server, socket) => {
   const nameUser = (userName) => {
@@ -76,8 +79,8 @@ const registerUserHandlers = (server, socket) => {
     }
     console.log(nameHash);
     console.log(`${socket.id} is ${userName}`);
-  }
+  };
 
   // LISTENERS  USER_(EVENT)
-  socket.on('USER_NAME', nameUser)
-}
+  socket.on('USER_NAME', nameUser);
+};
