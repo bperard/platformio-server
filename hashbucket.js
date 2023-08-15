@@ -1,6 +1,6 @@
 'use strict';
 
-class Hashbuckets {
+class Hashbucket {
   constructor(size) {
     this.size = size;
     this.buckets = new Array(size);
@@ -18,14 +18,14 @@ class Hashbuckets {
     return hashedKey;
   }
 
-  addItem(key, value) {
+  addItem(key, item) {
     const hashedKey = this.hashKey(key);
 
     if (!this.buckets[hashedKey]) {
       this.buckets[hashedKey] = [];
     }
 
-    this.buckets[hashedKey].push([key, value]);
+    this.buckets[hashedKey].push(item);
   }
 
   hasItem(key) {
@@ -49,3 +49,5 @@ class Hashbuckets {
 
   }
 }
+
+export default Hashbucket;

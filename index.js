@@ -4,6 +4,8 @@ require('dotenv').config();
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 
+const Hashbucket = require('./hashbucket');
+
 const PORT = 3000;
 const httpServer = createServer();
 const server = new Server(httpServer, {
@@ -43,7 +45,7 @@ const onConnection = (socket) => {
 server.on('connection', onConnection);
 
 const registerUserHandlers = (server, socket) => {
-  const roomDirectory = {};
+  const roomDirectory = new Hashbucket(1024);
 
   const stringGenerator = (length, charSetString) => {
     let outputString = '';
@@ -64,17 +66,18 @@ const registerUserHandlers = (server, socket) => {
 
   const createRoom = () => {
     const roomName = stringGenerator(5, 'A1');
-    
     console.log(`Room: ${roomName}`);
+
+    roomDirectory.addItem(roomName, 1);
   };
 
   const nameUser = (userName) => {
     socket.data.name = userName;
-    let nameHash = 0;
-    for (let i = 0; i < userName.length; i++) {
-      nameHash += userName.charCodeAt(i) + i;
-    }
-    console.log('nameHash', nameHash);
+    // let nameHash = 0;
+    // for (let i = 0; i < userName.length; i++) {
+    //   nameHash += userName.charCodeAt(i) + i;
+    // }
+    // console.log('nameHash', nameHash);
     console.log(`${socket.id} is ${socket.data.name}`);
   };
 
