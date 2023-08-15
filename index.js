@@ -43,6 +43,8 @@ const onConnection = (socket) => {
 server.on('connection', onConnection);
 
 const registerUserHandlers = (server, socket) => {
+  const roomDirectory = {};
+
   const stringGenerator = (length, charSetString) => {
     let outputString = '';
     let chars = '';
@@ -60,20 +62,20 @@ const registerUserHandlers = (server, socket) => {
     return outputString;
   };
 
-  const createRoom = (userName) => {
+  const createRoom = () => {
     const roomName = stringGenerator(5, 'A1');
-    console.log(userName);
-    console.log(roomName);
+    
+    console.log(`Room: ${roomName}`);
   };
 
   const nameUser = (userName) => {
     socket.data.name = userName;
     let nameHash = 0;
-    for (let char of userName) {
-      nameHash += char.charCodeAt(0);
+    for (let i = 0; i < userName.length; i++) {
+      nameHash += userName.charCodeAt(i) + i;
     }
-    console.log(nameHash);
-    console.log(`${socket.id} is ${userName}`);
+    console.log('nameHash', nameHash);
+    console.log(`${socket.id} is ${socket.data.name}`);
   };
 
   // LISTENERS  USER_(EVENT)
