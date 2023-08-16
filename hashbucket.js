@@ -15,28 +15,35 @@ class Hashbucket {
     }
 
     const hashedKey = (hashed * 983) % this.buckets;
-    return hashedKey;
+    return {hashedKey, bucket: this.buckets[hashedKey]};
   }
 
-  addItem(key, item) {
-    const hashedKey = this.hashKey(key);
+  incrementItem(key, item) {
+    const { hashedKey, bucket } = this.hashKey(key);
 
-    if (!this.buckets[hashedKey]) {
-      this.buckets[hashedKey] = [];
+    if (!bucket) {
+      bucket[0] = {room: key};
+      for (let property in item) {
+        bucket[0][property] += item.property;
+      }
     }
 
-    this.buckets[hashedKey].push(item);
+    const itemIndex = this.hasItem(hashedKey);
+    if (itemIndex > -1) {
+      for (let property in item) {
+        bucket[itemIndex][property] += item.property;
+      }
+    }
   }
 
-  hasItem(key) {
-    const hashedKey = this.hashKey(key);
+  hasItem(hashedKey, key) {
     const bucket = this.buckets[hashedKey];
-    let foundItem = false;
+    let foundItem = -1;
 
     if (bucket) {
       for (let i = 0; i < bucket.length; i++) {
-        if (bucket[i][0] === key) {
-          foundItem = true;
+        if (bucket.room === key) {
+          foundItem = i;
           i = bucket.length;
         }
       }
