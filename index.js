@@ -68,7 +68,7 @@ const registerUserHandlers = (server, socket) => {
     const roomName = stringGenerator(5, 'A1');
     console.log(`Room: ${roomName}`);
 
-    roomDirectory.addItem(roomName, 1);
+    roomDirectory.addItem({room: roomName, occupancy: 1});
   };
 
   const nameUser = (userName) => {

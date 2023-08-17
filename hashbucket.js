@@ -89,4 +89,4 @@ class Hashbucket {
   }
 }
 
-export default Hashbucket;
+module.exports = Hashbucket;
