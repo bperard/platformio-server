@@ -1,6 +1,6 @@
 'use strict';
 
-require('dotenv').config();
+// require('dotenv').config();
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 
@@ -24,18 +24,19 @@ const onConnection = (socket) => {
     pass: null,
   };
 
+  socket.on('disconnect', () => {
+    console.log(`User disconnected ${socket.id}`);
+    console.log(socket.data);
+  });
+
+  // EVENT LOGGING
   socket.onAny((event, eventPayload = 'eventPayload null') => {
     const eventNotification = {
       event,
       date: Date(),
       eventPayload,
     };
-    console.log(eventNotification);
-  });
-
-  socket.on('disconnect', () => {
-    console.log(`User disconnected ${socket.id}`);
-    console.log(socket.data);
+    console.log(eventNotification);  // Can swap for saved logs
   });
 
   // HANDLERS
@@ -45,8 +46,6 @@ const onConnection = (socket) => {
 server.on('connection', onConnection);
 
 const registerUserHandlers = (server, socket) => {
-  const roomDirectory = new Hashbucket(1024);
-
   const stringGenerator = (length, charSetString) => {
     let outputString = '';
     let chars = '';
@@ -64,11 +63,26 @@ const registerUserHandlers = (server, socket) => {
     return outputString;
   };
 
-  const createRoom = () => {
-    const roomName = stringGenerator(5, 'A1');
-    console.log(`Room: ${roomName}`);
+  // MOVE ABOVE TO OWN MODULES
+  const roomDirectory = new Hashbucket(1024);
 
-    roomDirectory.addItem({room: roomName, occupancy: 1});
+  const createRoom = () => {
+    let roomName = stringGenerator(5, 'A1');
+    
+    for (let i = 0; i < 10; i++) {
+      console.log(`Room: ${roomName} (ATTEMPT)`);
+      if (!roomDirectory.getItem(roomName)) {
+        i = 10;
+        console.log(`Room: ${roomName} (SUCCESS)`);
+      } else if (i > 8) {
+        // NAME FAILED, TRY AGAIN SOCKET EVENT
+      } else {
+        roomName = stringGenerator(5, 'A1');
+      }
+    }
+    roomDirectory.setItem({ key: roomName, occupancy: 1 });
+
+    // ROOM CREATED/JOINED SOCKET EVENT
   };
 
   const nameUser = (userName) => {
