@@ -54,4 +54,48 @@ describe('Hashbucket', () => {
     singleBucket.removeItem(item0.key);
     expect(currentBucket).toEqual([item1]);
   });
+
+  it('Updates provided item properties', () => {
+    const testBucket = new Hashbucket(20);
+    const item = {
+      key: 'this is my key',
+      value: 42,
+      slogan: 'this is my slogan',
+    };
+    const itemUpdate = {
+      key: 'this is my key',
+      slogan: 'this is now my slogan',
+    };
+    const itemFinal = {
+      key: 'this is my key',
+      value: 42,
+      slogan: 'this is now my slogan',
+    };
+
+    testBucket.addItem(item);
+    const currentBucket = testBucket.buckets[testBucket.hashKey(item.key)];
+    expect(currentBucket).toEqual([item]);
+
+    testBucket.updateItem(itemUpdate);
+    expect(currentBucket).toEqual([itemFinal]);
+  });
+
+  it('Returns response object containing bucket, index, and hashkey of provided item; index will be -1 if item not present', () => {
+    const testBucket = new Hashbucket(20);
+    const item = {
+      key: 'this is my key',
+      value: 42,
+    };
+    const meti = {
+      key: 'yek ym si siht',
+      value: 24,
+    };
+
+    testBucket.addItem(item);
+    const itemResponse = testBucket.hasItem(item.key);
+    expect(itemResponse).toEqual({bucket: testBucket.buckets[13], index: 0, hashedKey: 13});
+
+    const metiResponse = testBucket.hasItem(meti.key);
+    expect(metiResponse).toEqual({bucket: undefined, index: -1, hashedKey: 3});
+  });
 });
