@@ -9,4 +9,15 @@ describe('Hashbucket', () => {
 
     expect(newHashbucket.size).toEqual(size);
   });
+
+  const size = 20;
+  const testBucket = new Hashbucket(size);
+
+  it('Returns a hashkey in range 0 to this.size - 1', () => {
+    const hashedKey = testBucket.hashKey('this is my key');
+
+    expect(hashedKey).toBeGreaterThanOrEqual(0);
+    expect(hashedKey).toBeLessThan(testBucket.size);
+  });
+
 });
