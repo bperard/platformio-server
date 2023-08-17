@@ -46,8 +46,8 @@ class Hashbucket {
       for (let property in item) {
         bucket[0][property] = item.property;
       }
-    } else {
-      // Item already present, decide if error response, or silent fail
+      // } else {
+      //   Item already present, decide if error response, or silent fail
     }
   }
 
@@ -56,9 +56,36 @@ class Hashbucket {
 
     if (bucket && (index > -1)) {
       bucket.splice(index, 1);
-    } else {
-      // Item not present decide if error response, or silent fail
+      // } else {
+      //   Item not present decide if error response, or silent fail
     }
+  }
+
+  updateItem(key, itemUpdates) {
+    const { bucket, index } = this.hasItem(key);
+
+    if (bucket && (index > -1)) {
+      const item = bucket[index];
+      for (let update in itemUpdates) {
+        item[update] = itemUpdates[update];
+      }
+    // } else {
+    //     Item not present decide if error response, or silent fail;
+    }
+  }
+
+  getKeys() {
+    const keys = [];
+
+    for (let bucket of this.buckets) {
+      if (bucket) {
+        for (let item of bucket) {
+          keys.push(item.key);
+        }
+      }
+    }
+
+    return keys;
   }
 }
 
