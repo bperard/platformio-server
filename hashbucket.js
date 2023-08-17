@@ -13,8 +13,8 @@ class Hashbucket {
     for (let i = 0; i < keyString.length; i++) {
       hashed += +`${keyString.charCodeAt(i)}${i}`;
     }
-
-    const hashedKey = (hashed * 983) % this.buckets;
+    
+    const hashedKey = (hashed * 983) % this.size;
     return hashedKey;
   }
 
