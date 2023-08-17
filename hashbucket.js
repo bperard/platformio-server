@@ -13,38 +13,22 @@ class Hashbucket {
     for (let i = 0; i < keyString.length; i++) {
       hashed += +`${keyString.charCodeAt(i)}${i}`;
     }
-    
+
     const hashedKey = (hashed * 983) % this.size;
     return hashedKey;
   }
 
-  hasItem(key) {
-    const hashedKey = this.hashKey(key);
-    const bucket = this.buckets[hashedKey];
-    const bucketAndIndex = { bucket, index: -1 };
-
-    if (bucket) {
-      for (let i = 0; i < bucket.length; i++) {
-        if (bucket[i].key === key) {
-          bucketAndIndex.index = i;
-          i = bucket.length;
-        }
-      }
-    }
-
-    return bucketAndIndex;
-  }
-
   addItem(key, item) {
-    const { bucket, index } = this.hasItem(key);
+    let { bucket, index, hashedKey } = this.hasItem(key);
 
     if (!bucket) {
-      bucket[0] = { key };
+      this.buckets[hashedKey] = [{key}];
+      bucket = this.buckets[hashedKey];
     }
 
     if (index < 0) {
       for (let property in item) {
-        bucket[0][property] = item.property;
+        bucket[0][property] = item[property];
       }
       // } else {
       //   Item already present, decide if error response, or silent fail
@@ -61,6 +45,23 @@ class Hashbucket {
     }
   }
 
+  hasItem(key) {
+    const hashedKey = this.hashKey(key);
+    const bucket = this.buckets[hashedKey];
+    const bucketIndexAndHashedKey = { bucket, index: -1, hashedKey };
+
+    if (bucket) {
+      for (let i = 0; i < bucket.length; i++) {
+        if (bucket[i].key === key) {
+          bucketIndexAndHashedKey.index = i;
+          i = bucket.length;
+        }
+      }
+    }
+
+    return bucketIndexAndHashedKey;
+  }
+
   updateItem(key, itemUpdates) {
     const { bucket, index } = this.hasItem(key);
 
@@ -69,8 +70,8 @@ class Hashbucket {
       for (let update in itemUpdates) {
         item[update] = itemUpdates[update];
       }
-    // } else {
-    //     Item not present decide if error response, or silent fail;
+      // } else {
+      //     Item not present decide if error response, or silent fail;
     }
   }
 
