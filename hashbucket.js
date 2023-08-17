@@ -18,25 +18,24 @@ class Hashbucket {
     return hashedKey;
   }
 
-  addItem(key, item) {
+  addItem(item) {
+    const { key } = item;
     let { bucket, index, hashedKey } = this.hasItem(key);
 
-    if (!bucket) {
-      this.buckets[hashedKey] = [{key}];
+    if (!bucket || bucket.length < 1) {
+      this.buckets[hashedKey] = [];
       bucket = this.buckets[hashedKey];
     }
 
     if (index < 0) {
-      for (let property in item) {
-        bucket[0][property] = item[property];
-      }
+      bucket.push(item);
       // } else {
       //   Item already present, decide if error response, or silent fail
     }
   }
 
   removeItem(key) {
-    const { bucket, index } = this.hasItem(key);
+    let { bucket, index } = this.hasItem(key);
 
     if (bucket && (index > -1)) {
       bucket.splice(index, 1);
