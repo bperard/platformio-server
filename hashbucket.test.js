@@ -20,4 +20,14 @@ describe('Hashbucket', () => {
     expect(hashedKey).toBeLessThan(testBucket.size);
   });
 
+  it('Adds item to bucket of hashed index', () => {
+    const item = {
+      key: 'this is my key',
+      value: 42,
+    };
+
+    testBucket.addItem(item.key, item);
+    const currentBucket = testBucket.buckets[testBucket.hashKey(item.key)];
+    expect(currentBucket).toEqual([item]);
+  });
 });
