@@ -18,7 +18,7 @@ class Hashbucket {
     return hashedKey;
   }
 
-  addItem(item) {
+  setItem(item) {
     const { key } = item;
     let { bucket, index, hashedKey } = this.hasItem(key);
 
@@ -32,6 +32,12 @@ class Hashbucket {
       // } else {
       //   Item already present, decide if error response, or silent fail
     }
+  }
+
+  getItem(key) {
+    const { index, bucket } = this.hasItem(key);
+    
+    return index ? bucket[index] : false;
   }
 
   removeItem(key) {

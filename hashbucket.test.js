@@ -27,7 +27,7 @@ describe('Hashbucket', () => {
       value: 42,
     };
 
-    testBucket.addItem(item);
+    testBucket.setItem(item);
     const currentBucket = testBucket.buckets[testBucket.hashKey(item.key)];
 
     expect(currentBucket).toEqual([item]);
@@ -44,11 +44,11 @@ describe('Hashbucket', () => {
       value: 101,
     };
 
-    singleBucket.addItem(item0);
+    singleBucket.setItem(item0);
     const currentBucket = singleBucket.buckets[0];
     expect(currentBucket).toEqual([item0]);
 
-    singleBucket.addItem(item1);
+    singleBucket.setItem(item1);
     expect(currentBucket).toEqual([item0, item1]);
 
     singleBucket.removeItem(item0.key);
@@ -72,7 +72,7 @@ describe('Hashbucket', () => {
       slogan: 'this is now my slogan',
     };
 
-    testBucket.addItem(item);
+    testBucket.setItem(item);
     const currentBucket = testBucket.buckets[testBucket.hashKey(item.key)];
     expect(currentBucket).toEqual([item]);
 
@@ -91,11 +91,34 @@ describe('Hashbucket', () => {
       value: 24,
     };
 
-    testBucket.addItem(item);
+    testBucket.setItem(item);
     const itemResponse = testBucket.hasItem(item.key);
     expect(itemResponse).toEqual({bucket: testBucket.buckets[13], index: 0, hashedKey: 13});
 
     const metiResponse = testBucket.hasItem(meti.key);
     expect(metiResponse).toEqual({bucket: undefined, index: -1, hashedKey: 3});
+  });
+
+  it('Returns an array containing the keys for every item', () => {
+    const testBucket = new Hashbucket(20);
+    const item = {
+      key: 'this is my key',
+      value: 42,
+    };
+    const meti = {
+      key: 'yek ym si siht',
+      value: 24,
+    };
+    const item1 = {
+      key: 'this is also my key',
+      value: 101,
+    };
+
+    testBucket.setItem(item);
+    testBucket.setItem(meti);
+    testBucket.setItem(item1);
+    const keys = testBucket.getKeys();
+
+    expect(keys).toEqual(['yek ym si siht', 'this is also my key', 'this is my key']);
   });
 });
