@@ -37,7 +37,7 @@ class Hashbucket {
   getItem(key) {
     const { index, bucket } = this.hasItem(key);
     
-    return index ? bucket[index] : false;
+    return index > -1 ? bucket[index] : false;
   }
 
   removeItem(key) {

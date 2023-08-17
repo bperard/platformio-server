@@ -33,6 +33,25 @@ describe('Hashbucket', () => {
     expect(currentBucket).toEqual([item]);
   });
 
+  it('Returns item object or false if item not present', () => {
+    const testBucket = new Hashbucket(20);
+    const item = {
+      key: 'this is my key',
+      value: 42,
+    };
+    const meti = {
+      key: 'yek ym si siht',
+      value: 24,
+    };
+
+    testBucket.setItem(item);
+    const itemReturned = testBucket.getItem(item.key);
+    const itemNotFound = testBucket.getItem(meti.key);
+
+    expect(itemReturned).toEqual(item);
+    expect(itemNotFound).toEqual(false);
+  });
+
   it('Removes item from bucket of hashed index', () => {
     const singleBucket = new Hashbucket(1);
     const item0 = {
