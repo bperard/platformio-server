@@ -1,6 +1,6 @@
 'use strict';
 
-// require('dotenv').config();
+require('dotenv').config();
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 
