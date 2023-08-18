@@ -18,30 +18,48 @@ class Hashbucket {
     return hashedKey;
   }
 
-  addItem(key, item) {
+  setItem(item) {
+    const { key } = item;
     let { bucket, index, hashedKey } = this.hasItem(key);
 
-    if (!bucket) {
-      this.buckets[hashedKey] = [{key}];
+    if (!bucket || bucket.length < 1) {
+      this.buckets[hashedKey] = [];
       bucket = this.buckets[hashedKey];
     }
 
     if (index < 0) {
-      for (let property in item) {
-        bucket[0][property] = item[property];
-      }
+      bucket.push(item);
       // } else {
       //   Item already present, decide if error response, or silent fail
     }
   }
 
+  getItem(key) {
+    const { index, bucket } = this.hasItem(key);
+    
+    return index > -1 ? bucket[index] : false;
+  }
+
   removeItem(key) {
-    const { bucket, index } = this.hasItem(key);
+    let { bucket, index } = this.hasItem(key);
 
     if (bucket && (index > -1)) {
       bucket.splice(index, 1);
       // } else {
       //   Item not present decide if error response, or silent fail
+    }
+  }
+
+  updateItem(itemUpdates) {
+    const { bucket, index } = this.hasItem(itemUpdates.key);
+
+    if (bucket && (index > -1)) {
+      const item = bucket[index];
+      for (let update in itemUpdates) {
+        item[update] = itemUpdates[update];
+      }
+      // } else {
+      //     Item not present decide if error response, or silent fail;
     }
   }
 
@@ -60,19 +78,6 @@ class Hashbucket {
     }
 
     return bucketIndexAndHashedKey;
-  }
-
-  updateItem(key, itemUpdates) {
-    const { bucket, index } = this.hasItem(key);
-
-    if (bucket && (index > -1)) {
-      const item = bucket[index];
-      for (let update in itemUpdates) {
-        item[update] = itemUpdates[update];
-      }
-      // } else {
-      //     Item not present decide if error response, or silent fail;
-    }
   }
 
   getKeys() {
