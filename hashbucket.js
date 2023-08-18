@@ -14,47 +14,80 @@ class Hashbucket {
       hashed += +`${keyString.charCodeAt(i)}${i}`;
     }
 
-    const hashedKey = (hashed * 983) % this.buckets;
-    return {hashedKey, bucket: this.buckets[hashedKey]};
+    const hashedKey = (hashed * 983) % this.size;
+    return hashedKey;
   }
 
-  incrementItem(key, item) {
-    const { hashedKey, bucket } = this.hashKey(key);
+  addItem(key, item) {
+    let { bucket, index, hashedKey } = this.hasItem(key);
 
     if (!bucket) {
-      bucket[0] = {room: key};
-      for (let property in item) {
-        bucket[0][property] += item.property;
-      }
+      this.buckets[hashedKey] = [{key}];
+      bucket = this.buckets[hashedKey];
     }
 
-    const itemIndex = this.hasItem(hashedKey);
-    if (itemIndex > -1) {
+    if (index < 0) {
       for (let property in item) {
-        bucket[itemIndex][property] += item.property;
+        bucket[0][property] = item[property];
       }
+      // } else {
+      //   Item already present, decide if error response, or silent fail
     }
   }
 
-  hasItem(hashedKey, key) {
+  removeItem(key) {
+    const { bucket, index } = this.hasItem(key);
+
+    if (bucket && (index > -1)) {
+      bucket.splice(index, 1);
+      // } else {
+      //   Item not present decide if error response, or silent fail
+    }
+  }
+
+  hasItem(key) {
+    const hashedKey = this.hashKey(key);
     const bucket = this.buckets[hashedKey];
-    let foundItem = -1;
+    const bucketIndexAndHashedKey = { bucket, index: -1, hashedKey };
 
     if (bucket) {
       for (let i = 0; i < bucket.length; i++) {
-        if (bucket.room === key) {
-          foundItem = i;
+        if (bucket[i].key === key) {
+          bucketIndexAndHashedKey.index = i;
           i = bucket.length;
         }
       }
     }
 
-    return foundItem;
+    return bucketIndexAndHashedKey;
   }
 
-  removeItem(key) {
+  updateItem(key, itemUpdates) {
+    const { bucket, index } = this.hasItem(key);
 
+    if (bucket && (index > -1)) {
+      const item = bucket[index];
+      for (let update in itemUpdates) {
+        item[update] = itemUpdates[update];
+      }
+      // } else {
+      //     Item not present decide if error response, or silent fail;
+    }
+  }
+
+  getKeys() {
+    const keys = [];
+
+    for (let bucket of this.buckets) {
+      if (bucket) {
+        for (let item of bucket) {
+          keys.push(item.key);
+        }
+      }
+    }
+
+    return keys;
   }
 }
 
-export default Hashbucket;
+module.exports = Hashbucket;
