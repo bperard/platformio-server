@@ -1,5 +1,7 @@
 'use strict';
 
+const stringGenerator = require('./utils/utils');
+
 class Hashbucket {
   constructor(size) {
     this.size = size;
@@ -22,16 +24,16 @@ class Hashbucket {
     const { key } = item;
     let { bucket, index, hashedKey } = this.hasItem(key);
 
-    if (!bucket || bucket.length < 1) {
-      this.buckets[hashedKey] = [];
-      bucket = this.buckets[hashedKey];
-    }
+    if (index < 0) { 
+      if (!bucket) {
+        this.buckets[hashedKey] = [];
+        bucket = this.buckets[hashedKey];
+      }
 
-    if (index < 0) {
       bucket.push(item);
-      // } else {
-      //   Item already present, decide if error response, or silent fail
     }
+    // } else {
+    //   Item already present, decide if error response, or silent fail
   }
 
   getItem(key) {
@@ -92,6 +94,19 @@ class Hashbucket {
     }
 
     return keys;
+  }
+}
+
+class RoomDirectory extends Hashbucket {
+  constructor(size) {
+    super(size);
+  }
+
+  addRoom(roomName=null) {
+    if (!roomName) {
+      roomName = stringGenerator(5, 'A1');
+    }
+    console.log(roomName);
   }
 }
 
