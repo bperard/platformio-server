@@ -24,7 +24,7 @@ class Hashbucket {
     const { key } = item;
     let { bucket, index, hashedKey } = this.hasItem(key);
 
-    if (index < 0) { 
+    if (index < 0) {
       if (!bucket) {
         this.buckets[hashedKey] = [];
         bucket = this.buckets[hashedKey];
@@ -32,13 +32,11 @@ class Hashbucket {
 
       bucket.push(item);
     }
-    // } else {
-    //   Item already present, decide if error response, or silent fail
   }
 
   getItem(key) {
     const { index, bucket } = this.hasItem(key);
-    
+
     return index > -1 ? bucket[index] : false;
   }
 
@@ -47,8 +45,6 @@ class Hashbucket {
 
     if (bucket && (index > -1)) {
       bucket.splice(index, 1);
-      // } else {
-      //   Item not present decide if error response, or silent fail
     }
   }
 
@@ -57,11 +53,10 @@ class Hashbucket {
 
     if (bucket && (index > -1)) {
       const item = bucket[index];
+
       for (let update in itemUpdates) {
         item[update] = itemUpdates[update];
       }
-      // } else {
-      //     Item not present decide if error response, or silent fail;
     }
   }
 
@@ -102,12 +97,41 @@ class RoomDirectory extends Hashbucket {
     super(size);
   }
 
-  addRoom(roomName=null) {
+  addRoom(roomName = null) {
+    let attempts = 1;
+
     if (!roomName) {
       roomName = stringGenerator(5, 'A1');
+      attempts = 10;
     }
-    console.log(roomName);
+    
+    for (let i = 0; i < attempts; i++) {
+      console.log(`Room: ${roomName} (ATTEMPT)`);
+      
+      if (!RoomDirectory.getItem(roomName)) {
+        RoomDirectory.setItem({
+          key: roomName,
+          occupancy: 1,
+        });
+        i = attempts;
+        console.log(`Room: ${roomName} (SUCCESS)`);
+        return true;
+      } else if (i >= attempts - 1) {
+        console.log(`Room: ${roomName} (FAILURE)`);
+        return false;
+      } else {
+        roomName = stringGenerator(5, 'A1');
+      }
+    } 
+  }
+
+  removeRoom(roomName) {
+    RoomDirectory.removeItem(roomName);
+    return RoomDirectory.getItem(roomName) ? false : true;
   }
 }
 
-module.exports = Hashbucket;
+module.exports = {
+  Hashbucket,
+  RoomDirectory,
+};
