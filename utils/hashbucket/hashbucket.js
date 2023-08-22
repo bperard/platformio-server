@@ -173,7 +173,7 @@ class RoomDirectory extends Hashbucket {
     return this.getItem(roomName);
   }
 
-  getRoomDirectory() {
+  getAllRoomInfo() {
     const roomNames = this.getKeys();
     return roomNames.map(roomName => this.getItem(roomName));
   }
