@@ -126,9 +126,11 @@ class RoomDirectory extends Hashbucket {
         i = attempts;
         console.log(`Room: ${roomName} (SUCCESS)`);
         return true;
+
       } else if (i >= attempts - 1) {
         console.log(`Room: ${roomName} (FAILURE)`);
         return false;
+
       } else {
         roomName = stringGenerator(5, 'A1');
       }
@@ -159,7 +161,20 @@ class RoomDirectory extends Hashbucket {
       },
     });
 
+    if (leftRoom.occupancy < 1) {
+      leftRoom.removed = this.removeRoom(roomName);
+    }
+
     return leftRoom;
+  }
+
+  getRoomInfo(roomName) {
+    return this.getItem(roomName);
+  }
+
+  getRoomDirectory() {
+    const roomNames = this.getKeys();
+    return roomNames.map(roomName => this.getItem(roomName));
   }
 }
 
@@ -167,9 +182,3 @@ module.exports = {
   Hashbucket,
   RoomDirectory,
 };
-
-const RD = new RoomDirectory(10);
-console.log(RD.addRoom('here'));
-console.log(RD.getItem('here'));
-console.log(RD.joinRoom('here'));
-console.log(RD.leaveRoom('here'));
