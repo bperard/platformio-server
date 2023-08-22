@@ -7,14 +7,13 @@ const userHandlers = (server, socket) => {
 
   const createRoom = (roomName = null) => {
     const roomCreated = roomDirectory.addRoom(roomName);
+
     if (roomCreated) {
       socket.join(roomCreated);
       socket.data.room = roomCreated;
-      socket.emit('USER:ROOM_CREATED', roomCreated);
-
-    } else {
-      socket.emit('USER:ROOM_NOT_CREATED');  // Can attach error message to roomDirectoy.addRoom() false return
     }
+
+    socket.emit('USER:ROOM_CREATE_RESULT', roomCreated);  // Can attach error message to roomDirectoy.addRoom() false return
   };
 
   const getRoomNames = () => {
@@ -24,7 +23,7 @@ const userHandlers = (server, socket) => {
 
   const getRoomInfo = (roomName) => {
     const roomInfo = roomDirectory.getRoomInfo(roomName);
-    // RETURN ROOM INFO
+    socket.emit('USER:RECEIVE_ROOM_INFO', roomInfo);
   };
 
   const nameUser = (userName) => {
@@ -40,8 +39,9 @@ const userHandlers = (server, socket) => {
 
   // LISTENERS  USER_(EVENT)
   socket.on('USER:ROOM_CREATE', createRoom);
+  socket.on('USER:GET_ROOM_NAMES', getRoomNames);
+  socket.on('USER:GET_ROOM_INFO', getRoomInfo);
   socket.on('USER:NAME_ADD', nameUser);
-  socket.on('USER:GET_ROOMS', getRoomNames);
 };
 
 module.exports = userHandlers;
