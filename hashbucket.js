@@ -63,6 +63,10 @@ class Hashbucket {
           item[property] = itemUpdates[property];
         }
       }
+      return bucket[index];
+    
+    } else {
+      return false;
     }
   }
 
@@ -137,12 +141,25 @@ class RoomDirectory extends Hashbucket {
   }
 
   joinRoom(roomName) {
-    this.updateItem({
+    const joinedRoom = this.updateItem({
       key: roomName,
       occupancy: function (prev) {
         return prev + 1;
       },
     });
+
+    return joinedRoom;
+  }
+
+  leaveRoom(roomName) {
+    const leftRoom = this.updateItem({
+      key: roomName,
+      occupancy: function (prev) {
+        return prev - 1;
+      },
+    });
+
+    return leftRoom;
   }
 }
 
@@ -154,5 +171,5 @@ module.exports = {
 const RD = new RoomDirectory(10);
 console.log(RD.addRoom('here'));
 console.log(RD.getItem('here'));
-RD.joinRoom('here');
-console.log(RD.getItem('here'));
+console.log(RD.joinRoom('here'));
+console.log(RD.leaveRoom('here'));
