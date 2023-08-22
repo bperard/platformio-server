@@ -1,12 +1,18 @@
 'use strict';
 
+const { RoomDirectory } = require('../utils/hashbucket/hashbucket');
+
 const userHandlers = (server, socket) => {
-  const roomDirectory = new Hashbucket(1024);
+  const roomDirectory = new RoomDirectory(881);
 
-  const createRoom = () => {
-    // let roomName = stringGenerator(5, 'A1');
-
-    
+  const createRoom = (roomName = null) => {
+    const roomCreated = roomDirectory.addRoom(roomName);
+    if (roomCreated) {
+      socket.data.room = roomCreated;
+      // ROOM CREATED SOCKET EVENT
+    } else {
+      // ROOM NOT CREATED SOCKET EVENT
+    }
   };
 
   const getRoomNames = () => {
