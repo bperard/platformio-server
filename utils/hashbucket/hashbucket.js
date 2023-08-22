@@ -1,6 +1,6 @@
 'use strict';
 
-const stringGenerator = require('./utils/utils');
+const { stringGenerator } = require('../utils');
 
 class Hashbucket {
   constructor(size) {
@@ -64,7 +64,7 @@ class Hashbucket {
         }
       }
       return bucket[index];
-    
+
     } else {
       return false;
     }
@@ -101,6 +101,7 @@ class Hashbucket {
     return keys;
   }
 }
+
 
 class RoomDirectory extends Hashbucket {
   constructor(size) {
