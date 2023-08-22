@@ -50,6 +50,20 @@ const userHandlers = (server, socket) => {
     socket.emit('USER:ROOM_JOINED', roomInfo);
   };
 
+  const leaveRoom = () => {
+    const roomInfo = roomDirectory.leaveRoom(socket.data.room);
+
+    if (roomInfo) {
+      socket.leave(socket.data.room);
+      socket.data.room = null;
+      if (!roomInfo.removed) {
+        socket.to(socket.data.room).emit('USER:ROOM_LEFT', roomInfo);
+      }
+    }
+
+    socket.emit('USER:ROOM_LEFT', roomInfo);
+  };
+
 
   // ROOM INFORMATION
 
@@ -94,6 +108,7 @@ const userHandlers = (server, socket) => {
   socket.on('USER:ROOM_CREATE', createRoom);
   socket.on('USER:ROOM_DELETE', deleteRoom);
   socket.on('USER:JOIN_ROOM', joinRoom);
+  socket.on('USER:LEAVE_ROOM', leaveRoom);
 
   socket.on('USER:GET_ROOM_NAMES', getRoomNames);
   socket.on('USER:GET_ROOM_INFO', getRoomInfo);
