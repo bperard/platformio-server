@@ -126,7 +126,7 @@ class RoomDirectory extends Hashbucket {
         });
         i = attempts;
         console.log(`Room: ${roomName} (SUCCESS)`);
-        return true;
+        return roomName;
 
       } else if (i >= attempts - 1) {
         console.log(`Room: ${roomName} (FAILURE)`);
