@@ -16,6 +16,17 @@ const userHandlers = (server, socket) => {
     socket.emit('USER:ROOM_CREATE_RESULT', roomCreated);  // Can attach error message to roomDirectoy.addRoom() false return
   };
 
+  const deleteRoom = () => {
+    // Can user superuser in roomDirectory to check SID to authorize delete
+    // Fail message if not superuser?
+    // If chosen, transfer superuser on leave?
+    const roomRemoved = roomDirectory.removeRoom(socket.data.room);
+
+    if (roomRemoved) {
+      server.to(socket.data.room).emit('USER:ROOM_DELETED');
+    }
+  };
+
   const getRoomNames = () => {
     const roomNames = roomDirectory.getKeys();
     socket.emit('USER:RECEIVE_ROOM_NAMES', roomNames);
@@ -50,9 +61,12 @@ const userHandlers = (server, socket) => {
 
   // LISTENERS - USER:(EVENT_NAME)
   socket.on('USER:ROOM_CREATE', createRoom);
+  socket.on('USER:ROOM_DELETE', deleteRoom);
+
   socket.on('USER:GET_ROOM_NAMES', getRoomNames);
   socket.on('USER:GET_ROOM_INFO', getRoomInfo);
   socket.on('USER:GET_ALL_ROOM_INFO', getAllRoomInfo);
+
   socket.on('USER:NAME_ADD', nameUser);
 };
 
