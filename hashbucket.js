@@ -54,8 +54,14 @@ class Hashbucket {
     if (bucket && (index > -1)) {
       const item = bucket[index];
 
-      for (let update in itemUpdates) {
-        item[update] = itemUpdates[update];
+      for (let property in itemUpdates) {
+        const prevValue = item[property];
+
+        if (typeof itemUpdates[property] === 'function') {
+          item[property] = itemUpdates[property](prevValue);
+        } else {
+          item[property] = itemUpdates[property];
+        }
       }
     }
   }
@@ -104,12 +110,12 @@ class RoomDirectory extends Hashbucket {
       roomName = stringGenerator(5, 'A1');
       attempts = 10;
     }
-    
+
     for (let i = 0; i < attempts; i++) {
       console.log(`Room: ${roomName} (ATTEMPT)`);
-      
-      if (!RoomDirectory.getItem(roomName)) {
-        RoomDirectory.setItem({
+
+      if (!this.getItem(roomName)) {
+        this.setItem({
           key: roomName,
           occupancy: 1,
         });
@@ -122,12 +128,21 @@ class RoomDirectory extends Hashbucket {
       } else {
         roomName = stringGenerator(5, 'A1');
       }
-    } 
+    }
   }
 
   removeRoom(roomName) {
-    RoomDirectory.removeItem(roomName);
-    return RoomDirectory.getItem(roomName) ? false : true;
+    this.removeItem(roomName);
+    return this.getItem(roomName) ? false : true;
+  }
+
+  joinRoom(roomName) {
+    this.updateItem({
+      key: roomName,
+      occupancy: function (prev) {
+        return prev + 1;
+      },
+    });
   }
 }
 
@@ -135,3 +150,9 @@ module.exports = {
   Hashbucket,
   RoomDirectory,
 };
+
+const RD = new RoomDirectory(10);
+console.log(RD.addRoom('here'));
+console.log(RD.getItem('here'));
+RD.joinRoom('here');
+console.log(RD.getItem('here'));

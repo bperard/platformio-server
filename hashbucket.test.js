@@ -1,6 +1,6 @@
 'use strict';
 
-const Hashbucket = require('./hashbucket');
+const { Hashbucket } = require('./hashbucket');
 
 describe('Hashbucket', () => {
   it('Creates Hashbucket of given size', () => {
