@@ -17,4 +17,6 @@ const stringGenerator = (length, charSetString) => {
   return outputString;
 };
 
-module.exports = stringGenerator;
+module.exports = {
+  stringGenerator,
+};
