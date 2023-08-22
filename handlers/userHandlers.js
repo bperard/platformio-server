@@ -6,11 +6,21 @@ const userHandlers = (server, socket) => {
   const roomDirectory = new RoomDirectory(881);
 
   const createRoom = (roomName = null) => {
-    const roomCreated = roomDirectory.addRoom(roomName);
+
+
+    // ROOM MANAGEMENT
+
+
+    let roomCreated = roomDirectory.addRoom(socket.id, roomName);
 
     if (roomCreated) {
       socket.join(roomCreated);
       socket.data.room = roomCreated;
+      roomCreated = {
+        key: roomName,
+        occupancy: 1,
+        superuser: socket.id,
+      };
     }
 
     socket.emit('USER:ROOM_CREATE_RESULT', roomCreated);  // Can attach error message to roomDirectoy.addRoom() false return
@@ -23,9 +33,26 @@ const userHandlers = (server, socket) => {
     const roomRemoved = roomDirectory.removeRoom(socket.data.room);
 
     if (roomRemoved) {
-      server.to(socket.data.room).emit('USER:ROOM_DELETED');
+      server.in(socket.data.room).emit('USER:ROOM_DELETED');
     }
   };
+
+  const joinRoom = (roomName) => {
+    const roomInfo = roomDirectory.joinRoom(roomName);
+
+    if (roomInfo) {
+      // Should probably set userName in this flow and send to room with SID
+      socket.join(roomInfo.key);
+      socket.data.room = roomInfo.key;
+      socket.to(socket.data.room).emit('USER:NEW_USER', socket.id);
+    }
+
+    socket.emit('USER:ROOM_JOINED', roomInfo);
+  };
+
+
+  // ROOM INFORMATION
+
 
   const getRoomNames = () => {
     const roomNames = roomDirectory.getKeys();
@@ -41,6 +68,10 @@ const userHandlers = (server, socket) => {
     const allRoomInfo = roomDirectory.getAllRoomInfo();
     socket.emit('USER:RECEIVE_ALL_ROOM_INFO', allRoomInfo);
   };
+
+
+  // USER MANAGEMENT
+
 
   const nameUser = (userName) => {
     socket.data.name = userName;
@@ -62,6 +93,7 @@ const userHandlers = (server, socket) => {
   // LISTENERS - USER:(EVENT_NAME)
   socket.on('USER:ROOM_CREATE', createRoom);
   socket.on('USER:ROOM_DELETE', deleteRoom);
+  socket.on('USER:JOIN_ROOM', joinRoom);
 
   socket.on('USER:GET_ROOM_NAMES', getRoomNames);
   socket.on('USER:GET_ROOM_INFO', getRoomInfo);

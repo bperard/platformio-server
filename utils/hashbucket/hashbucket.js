@@ -1,5 +1,6 @@
 'use strict';
 
+const { Socket } = require('socket.io');
 const { stringGenerator } = require('../utils');
 
 class Hashbucket {
@@ -108,7 +109,7 @@ class RoomDirectory extends Hashbucket {
     super(size);
   }
 
-  addRoom(roomName = null) {
+  addRoom(SID, roomName = null) {
     let attempts = 1;
 
     if (!roomName) {
@@ -123,6 +124,7 @@ class RoomDirectory extends Hashbucket {
         this.setItem({
           key: roomName,
           occupancy: 1,
+          superuser: SID,
         });
         i = attempts;
         console.log(`Room: ${roomName} (SUCCESS)`);
