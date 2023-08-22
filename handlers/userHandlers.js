@@ -8,20 +8,22 @@ const userHandlers = (server, socket) => {
   const createRoom = (roomName = null) => {
     const roomCreated = roomDirectory.addRoom(roomName);
     if (roomCreated) {
+      socket.join(roomCreated);
       socket.data.room = roomCreated;
-      // ROOM CREATED SOCKET EVENT
+      socket.emit('USER:ROOM_CREATED', roomCreated);
+
     } else {
-      // ROOM NOT CREATED SOCKET EVENT
+      socket.emit('USER:ROOM_NOT_CREATED');  // Can attach error message to roomDirectoy.addRoom() false return
     }
   };
 
   const getRoomNames = () => {
     const roomNames = roomDirectory.getKeys();
-    // RETURN ROOM NAMES SOCKET EVENT
+    socket.emit('USER:RECEIVE_ROOM_NAMES', roomNames);
   };
 
   const getRoomInfo = (roomName) => {
-    const roomInfo = roomDirectory.getItem(roomName);
+    const roomInfo = roomDirectory.getRoomInfo(roomName);
     // RETURN ROOM INFO
   };
 
