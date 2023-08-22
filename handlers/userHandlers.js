@@ -104,7 +104,10 @@ const userHandlers = (server, socket) => {
     server.to(socket.data.room).emit('USER:NAME_ADDED', userInfo);
   };
 
+
   // LISTENERS - USER:(EVENT_NAME)
+
+  
   socket.on('USER:ROOM_CREATE', createRoom);
   socket.on('USER:ROOM_DELETE', deleteRoom);
   socket.on('USER:JOIN_ROOM', joinRoom);
