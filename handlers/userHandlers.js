@@ -5,12 +5,9 @@ const { RoomDirectory } = require('../utils/hashbucket/hashbucket');
 const userHandlers = (server, socket) => {
   const roomDirectory = new RoomDirectory(881);
 
+  // --- ROOM MANAGEMENT HANDLERS ---
+
   const createRoom = (roomName = null) => {
-
-
-    // ROOM MANAGEMENT
-
-
     let roomCreated = roomDirectory.addRoom(socket.id, roomName);
 
     if (roomCreated) {
@@ -64,9 +61,7 @@ const userHandlers = (server, socket) => {
     socket.emit('USER:ROOM_LEFT', roomInfo);
   };
 
-
-  // ROOM INFORMATION
-
+  // --- ROOM INFORMATION HANDLERS --- 
 
   const getRoomNames = () => {
     const roomNames = roomDirectory.getKeys();
@@ -83,9 +78,7 @@ const userHandlers = (server, socket) => {
     socket.emit('USER:RECEIVE_ALL_ROOM_INFO', allRoomInfo);
   };
 
-
-  // USER MANAGEMENT
-
+  // --- USER MANAGEMENT HANDLERS --- 
 
   const nameUser = (userName) => {
     socket.data.name = userName;
@@ -104,10 +97,8 @@ const userHandlers = (server, socket) => {
     server.to(socket.data.room).emit('USER:NAME_ADDED', userInfo);
   };
 
+  // --- LISTENERS - USER:(EVENT_NAME) --- 
 
-  // LISTENERS - USER:(EVENT_NAME)
-
-  
   socket.on('USER:ROOM_CREATE', createRoom);
   socket.on('USER:ROOM_DELETE', deleteRoom);
   socket.on('USER:JOIN_ROOM', joinRoom);
