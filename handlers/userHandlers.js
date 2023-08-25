@@ -52,10 +52,12 @@ const userHandlers = (server, socket) => {
 
     if (roomInfo) {
       socket.leave(socket.data.room);
-      socket.data.room = null;
+      
       if (!roomInfo.removed) {
-        socket.to(socket.data.room).emit('USER:ROOM_LEFT', roomInfo);
+        server.in(socket.data.room).emit('USER:ROOM_LEFT', socket.id);
       }
+      
+      socket.data.room = null;
     }
 
     socket.emit('USER:ROOM_LEFT', roomInfo);
@@ -80,7 +82,7 @@ const userHandlers = (server, socket) => {
 
   // --- USER MANAGEMENT HANDLERS --- 
 
-  const nameUser = (userName) => {
+  const addUserName = (userName) => {
     socket.data.name = userName;
     const userInfo = {
       SID: socket.id,
@@ -94,7 +96,12 @@ const userHandlers = (server, socket) => {
     // }
     // console.log('nameHash', nameHash);
     console.log(`${socket.id} is ${socket.data.name}`);
-    server.to(socket.data.room).emit('USER:NAME_ADDED', userInfo);
+    server.in(socket.data.room).emit('USER:NAME_ADDED', userInfo);
+  };
+
+  const removeUserName = () => {
+    socket.data.name = null;
+    server.in(socket.data.room).emit('USER:NAME_REMOVED',socket.id);
   };
 
   // --- LISTENERS - USER:(EVENT_NAME) --- 
@@ -108,7 +115,8 @@ const userHandlers = (server, socket) => {
   socket.on('USER:GET_ROOM_INFO', getRoomInfo);
   socket.on('USER:GET_ALL_ROOM_INFO', getAllRoomInfo);
 
-  socket.on('USER:NAME_ADD', nameUser);
+  socket.on('USER:NAME_ADD', addUserName);
+  socket.on('USER:NAME_REMOVED', removeUserName);
 };
 
 module.exports = userHandlers;
