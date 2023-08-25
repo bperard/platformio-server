@@ -113,6 +113,12 @@ const userHandlers = (server, socket) => {
     server.in(socket.data.room).emit('USER:NAME_UPDATED', userInfo);
   };
 
+  // Get socket.data.name from specific socket.id
+  // Get usernames object
+  // - from superuser?
+  // - names = [{socket.id = name},...{}]
+  // Get all SIDs in room
+
   // --- LISTENERS - USER:(EVENT_NAME) --- 
 
   socket.on('USER:ROOM_CREATE', createRoom);
