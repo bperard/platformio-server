@@ -104,6 +104,15 @@ const userHandlers = (server, socket) => {
     server.in(socket.data.room).emit('USER:NAME_REMOVED',socket.id);
   };
 
+  const updateUserName = (userName) => {
+    socket.data.name = userName;
+    const userInfo = {
+      SID: socket.id,
+      userName: userName,
+    };
+    server.in(socket.data.room).emit('USER:NAME_UPDATED', userInfo);
+  };
+
   // --- LISTENERS - USER:(EVENT_NAME) --- 
 
   socket.on('USER:ROOM_CREATE', createRoom);
@@ -117,6 +126,7 @@ const userHandlers = (server, socket) => {
 
   socket.on('USER:NAME_ADD', addUserName);
   socket.on('USER:NAME_REMOVED', removeUserName);
+  socket.on('USER:NAME_UPDATED', updateUserName);
 };
 
 module.exports = userHandlers;
