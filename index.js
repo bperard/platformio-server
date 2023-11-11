@@ -6,7 +6,7 @@ const { Server } = require('socket.io');
 
 const registerUserHandlers = require('./handlers/userHandlers');
 
-const PORT = 3000;
+const PORT = PORT || 3000;
 const httpServer = createServer();
 const server = new Server(httpServer, {
   cors: {
