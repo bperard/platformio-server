@@ -41,6 +41,52 @@ const onConnection = (socket) => {
 
   // HANDLERS
   registerUserHandlers(server, socket);
+  messageHandlers(server, socket);
 };
 
 server.on('connection', onConnection);
+
+
+const messageHandlers = (server, socket) => {
+  // --- MESSAGE HANDLERS --- 
+
+  const sendMessage = (message) => {
+    const newMessage = {
+      MID: `${socket.id}${Date.now()}`,
+      SID: socket.id,
+      message,
+    };
+    server.emit('MESSAGE:ADD', newMessage);
+  };
+
+  const deleteMessage = (MID) => {
+    server.emit('MESSAGE:DELETE', MID);
+  };
+
+  const messageReply = (originMID, message) => {
+    const replyMessage = {
+      originMID,
+      MID: `${socket.id}${Date.now()}`,
+      SID: socket.id,
+      message,
+    };
+    server.emit('MESSAGE:REPLY', replyMessage);
+  };
+
+  const messageReaction = (originMID, reaction) => {
+    const messageReaction = {
+      originMID,
+      MID: `${socket.id}${Date.now()}`, // can remove if one reaction per originMID
+      SID: socket.id,
+      reaction, // provided by the client, reference library kept in channel, send UID for any reaction to find reaction
+    };
+    server.emit('MESSAGE:REACTION', messageReaction);
+  };
+
+  // --- LISTENERS - USER:(EVENT_NAME) --- 
+
+  socket.on('MESSAGE:ADD', sendMessage);
+  socket.on('MESSAGE:DELETE', deleteMessage);
+  socket.on('MESSAGE:REPLY', messageReply);
+  socket.on('MESSAGE:REACTION', messageReaction);
+};

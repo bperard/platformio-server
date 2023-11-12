@@ -130,7 +130,7 @@ const userHandlers = (server, socket) => {
   socket.on('USER:GET_ROOM_INFO', getRoomInfo);
   socket.on('USER:GET_ALL_ROOM_INFO', getAllRoomInfo);
 
-  socket.on('USER:NAME_ADD', addUserName);
+  socket.on('USER:NAME_ADDED', addUserName);
   socket.on('USER:NAME_REMOVED', removeUserName);
   socket.on('USER:NAME_UPDATED', updateUserName);
 };
